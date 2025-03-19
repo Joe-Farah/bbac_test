@@ -1,10 +1,8 @@
--- Create the database
 CREATE DATABASE bank_management;
 USE bank_management;
 
--- Customers Table
 CREATE TABLE customers (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -13,9 +11,8 @@ CREATE TABLE customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Addresses Table (One-to-Many Relationship with Customers)
 CREATE TABLE addresses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     street VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
@@ -26,9 +23,8 @@ CREATE TABLE addresses (
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
 
--- Credit Cards Table (One-to-Many Relationship with Customers)
 CREATE TABLE credit_cards (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     card_number VARCHAR(16) UNIQUE NOT NULL,
     card_type ENUM('Visa', 'MasterCard', 'Amex') NOT NULL,
@@ -39,7 +35,6 @@ CREATE TABLE credit_cards (
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
 
--- Insert Sample Data
 INSERT INTO customers (first_name, last_name, email, phone, date_of_birth)
 VALUES 
     ('John', 'Doe', 'johndoe@email.com', '1234567890', '1985-05-12'),
@@ -57,12 +52,10 @@ VALUES
     (1, '5500000000000004', 'MasterCard', '456', '2026-10-15', 7000.00, 3500.00),
     (2, '340000000000009', 'Amex', '789', '2028-07-20', 6000.00, 4000.00);
 
--- Fetch customers with their addresses
 SELECT c.id, c.first_name, c.last_name, a.street, a.city, a.state, a.zip_code, a.country, a.type
 FROM customers c
 LEFT JOIN addresses a ON c.id = a.customer_id;
 
--- Fetch customers with their credit cards
 SELECT c.id, c.first_name, c.last_name, cc.card_number, cc.card_type, cc.expiry_date, cc.credit_limit, cc.available_balance
 FROM customers c
 LEFT JOIN credit_cards cc ON c.id = cc.customer_id;
